@@ -62,5 +62,4 @@ async function cleanOldJobs() {
     console.log('Cleaned old jobs');
 }
 
-
 addJobs().then(() => cleanOldJobs())

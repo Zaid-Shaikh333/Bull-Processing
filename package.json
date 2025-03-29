@@ -4,7 +4,8 @@
   "description": "Bull Processing Project for Learnings",
   "main": "index.js",
   "scripts": {
-    "test": "npm run test"
+    "test": "npm run test",
+    "start:bull": "node workers/job.worker.js"
   },
   "repository": {
     "type": "git",
