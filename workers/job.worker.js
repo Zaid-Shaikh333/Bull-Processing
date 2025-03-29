@@ -9,14 +9,14 @@ const redisConnection = new IORedis({
 });
 
 const testWorker = new Worker(Queues.testQueue, async (job) => {
-    console.log(`Processing Test Job: ${job}`);
+    console.log(`Processing Test Job: ${JSON.stringify(job)}`);
 
     if (job.name === 'Bulk Job') {
         await new Promise((resolve) => setTimeout(resolve, 2000));
 
         console.log(`Random Log after Promise simulation`);
 
-        console.log(`Job Completed: ${job.data.key} - ${job.data.value}`);
+        console.log(`Job Completed: ${JSON.stringify(job.data.key)} - ${JSON.stringify(job.data.value)}`);
     }
 }, {
     connection: redisConnection,
@@ -27,12 +27,12 @@ const testWorker = new Worker(Queues.testQueue, async (job) => {
 });
 
 const apiWorker = new Worker(Queues.externalApiQueue, async (job) => {
-    console.log(`Processing API Job: ${job.data}`);
+    console.log(`Processing API Job: ${JSON.stringify(job.data)}`);
 
     if (job.name === 'External API Job') {
         try {
             const response = await axios.get(job.data.url);
-            console.log(`External API Response: ${JSON.parse(response.data)}`);
+            console.log(`External API Response: ${JSON.stringify(response.data)}`);
             return response
         } catch (error) {
             throw new Error(`API Called Failed: ${error.message}`);
@@ -52,15 +52,15 @@ testWorker.on('progress' , (job, progress) => {
 })
 
 testWorker.on('completed', (job) => {
-    console.log(`Test Worker Job Completed: ${job}`);
+    console.log(`Test Worker Job Completed: ${JSON.stringify(job)}`);
 })
 
 apiWorker.on('progress', (job, progress) => {
-    console.log(`ExternalAPI Worker Job: ${job} under Progress: ${progress}`);
+    console.log(`ExternalAPI Worker Job: ${JSON.stringify(job)} under Progress: ${JSON.stringify(progress)}`);
 })
 
 apiWorker.on('completed', (job) => {
-    console.log(`ExternalAPI Worker Job Completed: ${job}`);
+    console.log(`ExternalAPI Worker Job Completed: ${JSON.stringify(job)}`);
 })
 
 async function cleanOldJobs() {
