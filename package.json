@@ -1,0 +1,27 @@
+{
+  "name": "bull-processing",
+  "version": "1.0.0",
+  "description": "Bull Processing Project for Learnings",
+  "main": "index.js",
+  "scripts": {
+    "test": "npm run test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Zaid-Shaikh333/Bull-Processing.git"
+  },
+  "keywords": [
+    "bull-mq"
+  ],
+  "author": "Zaid",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Zaid-Shaikh333/Bull-Processing/issues"
+  },
+  "homepage": "https://github.com/Zaid-Shaikh333/Bull-Processing#readme",
+  "dependencies": {
+    "bullmq": "^5.45.1",
+    "dotenv": "^16.4.7",
+    "ioredis": "^5.6.0"
+  }
+}
