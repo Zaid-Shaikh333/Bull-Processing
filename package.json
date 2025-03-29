@@ -14,6 +14,7 @@
   "keywords": [
     "bull-mq"
   ],
+  "type": "module",
   "author": "Zaid",
   "license": "MIT",
   "bugs": {

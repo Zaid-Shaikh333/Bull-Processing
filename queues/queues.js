@@ -4,7 +4,6 @@ import { connection } from '../config/bull.config.js';
 export const Queues = {
     testQueue: 'myTestQueue',
     externalApiQueue: 'externalApiQueue',
-    batchProcessingQueue: 'batchProcessingQueue'
 }
 
 /**
@@ -15,8 +14,5 @@ export const Queues = {
  */
 export const testQueue = new Queue(Queues.testQueue, connection); 
 
-export const batchProcessingQueue = new Queue(Queues.batchProcessingQueue, connection, defaultJobOptions = {
-    sizeLimit: 30*1024*1024
-});
 
 export const externalAPIQueue = new Queue(Queues.externalApiQueue, connection);

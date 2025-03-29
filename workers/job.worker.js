@@ -1,7 +1,12 @@
-import { Worker, Job } from 'bullmq';
-import { Queues, testQueue, externalApiQueue } from '../queues/queues'
+import { Worker } from 'bullmq';
+import { Queues, testQueue, externalAPIQueue } from '../queues/queues.js'
 import axios from 'axios';
-import { addJobs} from '../queues/addJobs';
+import { addJobs} from '../queues/addJobs.js';
+import IORedis from 'ioredis';
+const redisConnection = new IORedis({
+    maxRetriesPerRequest: null, 
+    enableReadyCheck: true, 
+});
 
 const testWorker = new Worker(Queues.testQueue, async (job) => {
     console.log(`Processing Test Job: ${job}`);
@@ -11,30 +16,32 @@ const testWorker = new Worker(Queues.testQueue, async (job) => {
 
         console.log(`Random Log after Promise simulation`);
 
-        console.log(`Job Completed: ${job.data}`);
+        console.log(`Job Completed: ${job.data.key} - ${job.data.value}`);
     }
 }, {
-    concurrency: 10, limiter: {
-        max: 10,
+    connection: redisConnection,
+    concurrency: 5, limiter: {
+        max: 5,
         duration: 1000
     }
 });
 
 const apiWorker = new Worker(Queues.externalApiQueue, async (job) => {
-    console.log(`Processing API Job: ${job}`);
+    console.log(`Processing API Job: ${job.data}`);
 
     if (job.name === 'External API Job') {
         try {
             const response = await axios.get(job.data.url);
-            console.log(`External API Response: ${response.data}`);
+            console.log(`External API Response: ${JSON.parse(response.data)}`);
             return response
         } catch (error) {
             throw new Error(`API Called Failed: ${error.message}`);
         }
     }
 }, {
-    concurrency: 10, limiter: {
-        max: 10,
+    connection: redisConnection,
+    concurrency: 5, limiter: {
+        max: 5,
         duration: 1000
     }
 });
@@ -57,9 +64,10 @@ apiWorker.on('completed', (job) => {
 })
 
 async function cleanOldJobs() {
-    await testQueue.clean(100000, 100, 'completed'); 
-    await externalApiQueue.clean(100000, 100, 'completed');
+    await testQueue.clean(100, 100, 'completed'); 
+    await externalAPIQueue.clean(100, 100, 'completed');
     console.log('Cleaned old jobs');
 }
 
-addJobs().then(() => cleanOldJobs())
+addJobs();
+cleanOldJobs()

@@ -1,5 +1,5 @@
-import { testQueue, externalAPIQueue } from './queues';
-const limit = 1000;
+import { testQueue, externalAPIQueue } from './queues.js';
+const limit = 100;
 
 export const addJobs = async () => {
     for(let count = 0; count < limit; count++) {
@@ -10,7 +10,7 @@ export const addJobs = async () => {
 
         await testQueue.add('Bulk Job', job, {
             attempts: 3,
-            backoff: { type: 'fixed', delay: 3000 },
+            backoff: { type: 'fixed', delay: 1000 },
             delay: 500,
             removeOnComplete: true,
             removeOnFail: false,
@@ -22,7 +22,8 @@ export const addJobs = async () => {
 
         await externalAPIQueue.add('External API Job', apiJob, {
             attempts: 1,
-            backoff: { type: 'fixed', delay: 3000 },
+            backoff: { type: 'fixed', delay: 500 },
+            delay: 500,
             removeOnComplete: true,
         })
     }
